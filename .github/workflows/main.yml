@@ -25,7 +25,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./backend/Dockerfile.prod
+          context: ./backend
+          file: Dockerfile.prod
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/banshee_mern_stack:latest
