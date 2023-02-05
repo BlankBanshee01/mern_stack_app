@@ -17,8 +17,7 @@ const EditStudent = (props) => {
   const onSubmit = (studentObject) => {
     axios
       .put(
-        "http://127.0.0.1:4000/students/update-student/" +
-          props.match.params.id,
+        "/api/students/update-student/" + props.match.params.id,
         studentObject
       )
       .then((res) => {
@@ -33,9 +32,7 @@ const EditStudent = (props) => {
   // Load data from server and reinitialize student form
   useEffect(() => {
     axios
-      .get(
-        "http://127.0.0.1:4000/students/update-student/" + props.match.params.id
-      )
+      .get("/api/students/update-student/" + props.match.params.id)
       .then((res) => {
         const { name, email, rollno } = res.data;
         setFormValues({ name, email, rollno });

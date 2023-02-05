@@ -15,7 +15,7 @@ const CreateStudent = () => {
   // onSubmit handler
   const onSubmit = (studentObject) => {
     axios
-      .post("http://127.0.0.1:4000/students/create-student", studentObject)
+      .post("/api/students/create-student", studentObject)
       .then((res) => {
         if (res.status === 200) alert("Student successfully created");
         else Promise.reject();

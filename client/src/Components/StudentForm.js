@@ -1,7 +1,7 @@
 import React from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { FormGroup, FormControl, Button, FormLabel } from "react-bootstrap";
+import { FormGroup, Button, FormLabel } from "react-bootstrap";
 
 const StudentForm = (props) => {
   const validationSchema = Yup.object().shape({

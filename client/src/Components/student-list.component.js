@@ -8,7 +8,7 @@ const StudentList = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:4000/students/")
+      .get("/api/students")
       .then(({ data }) => {
         setStudents(data);
       })

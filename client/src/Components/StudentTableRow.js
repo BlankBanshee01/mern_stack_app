@@ -8,7 +8,7 @@ const StudentTableRow = (props) => {
 
   const deleteStudent = () => {
     axios
-      .delete("http://127.0.0.1:4000/students/delete-student/" + _id)
+      .delete("/api/students/delete-student" + _id)
       .then((res) => {
         if (res.status === 200) {
           alert("Student successfully deleted");

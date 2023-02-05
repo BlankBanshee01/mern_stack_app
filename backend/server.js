@@ -13,8 +13,6 @@ mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useUnifiedTopology", true);
 
-console.log(dbConfig.db);
-
 // Connecting MongoDB Database
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.db).then(
@@ -34,12 +32,13 @@ app.use(
   })
 );
 app.use(cors());
-app.use("/students", studentRoute);
+
+app.use("/api/students", studentRoute);
 
 // PORT
 const port = process.env.PORT || 4000;
 const server = app.listen(port, () => {
-  console.log("Connected to port " + port);
+  console.log("Connected to portt " + port);
 });
 
 // 404 Error

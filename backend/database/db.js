@@ -1,3 +1,3 @@
 module.exports = {
-  db: "mongodb://host.docker.internal:27017/reactdb",
+  db: "mongodb://mongo-svc:27017/reactdb",
 };
