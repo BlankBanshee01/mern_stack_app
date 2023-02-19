@@ -18,8 +18,7 @@ spec:
         app: backend
     spec:
       containers:
-      - image: mern-stack-backend-image
+      - image: blankbanshee/banshee_mern_stack_backend
         name: mern-stack-backend-image
-        imagePullPolicy: Never
         resources: {}
 status: {}

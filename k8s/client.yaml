@@ -18,8 +18,7 @@ spec:
         app: frontend
     spec:
       containers:
-      - image: mern-stack-crud-frontend
+      - image: blankbanshee/banshee_mern_stack_client
         name: mern-stack-crud-frontend
-        imagePullPolicy: Never
         resources: {}
 status: {}
