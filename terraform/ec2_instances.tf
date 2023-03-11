@@ -1,9 +1,9 @@
-# Define the provider
+# Defining the provider
 provider "aws" {
   region = var.region_name
 }
 
-# Define security group
+# Defining security group
 resource "aws_security_group" "allow_all" {
   name        = "allow_all"
   description = "Allow all traffic"
@@ -29,26 +29,26 @@ resource "aws_security_group" "allow_all" {
   }
 }
 
-# Create a private/pub key
+# Creating a private/pub key
 resource "tls_private_key" "ec2-k8s-key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-# Create the EC2 key pair
+# Creating the EC2 key pair
 resource "aws_key_pair" "tf-k8s" {
   key_name   = "k8s-ec2-cluster"
   public_key = tls_private_key.ec2-k8s-key.public_key_openssh
 }
 
-# Save private key file locally
+# Saving private key file locally
 resource "local_file" "ec2-k8s-key" {
   content  = tls_private_key.ec2-k8s-key.private_key_pem
   filename = "${local.work_path}/../inventory/k8s-ec2-cluster.pem"
   file_permission = "0400"
 }
 
-# Define the instances
+# Defininng the instances
 resource "aws_instance" "k8s" {
   for_each               = toset(var.instance_tag)
   ami                    = var.ami_id
@@ -90,6 +90,7 @@ EOF
   filename = "${local.work_path}/../inventory/cluster-inventory.yaml"
 }
 
+# Checking if master host is up and calling ansible for config-management
 resource "null_resource" "ansible" {
     provisioner "remote-exec" {
       inline = ["echo 'Waiting for server to be initialized...'"]
@@ -111,27 +112,3 @@ resource "null_resource" "ansible" {
     local_file.ansible_inventory,
   ]
 }
-
-# # Generate inventory file for Ansible
-# locals {
-#   ec2_master = tolist([aws_instance.k8s.0.private_ip])
-#   ec2_slave = tolist(aws_instance.k8s[1:].*.private_ip)
-#   inventory_content = templatefile("inventory.tpl", {ec2_master = local.ec2_master, ec2_slave = local.ec2_slave})
-# }
-
-# resource "local_file" "inventory_file" {
-#   content  = local.inventory_content
-#   filename = "inventory"
-# }
-
-# # Define Ansible inventory template
-# data "template_file" "inventory_template" {
-#   template = "${file("inventory.tpl")}"
-#   vars = {
-#     ec2_master = local.ec2_master
-#     ec2_slave = local.ec2_slave
-#   }
-# }
-
-##################
-
