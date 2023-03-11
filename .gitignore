@@ -107,3 +107,9 @@ dist
 
 *.pem
 cred.yml
+
+# Terraform
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+.terraform*
