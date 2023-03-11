@@ -37,14 +37,15 @@ resource "tls_private_key" "ec2-k8s-key" {
 
 # Create the EC2 key pair
 resource "aws_key_pair" "tf-k8s" {
-  key_name   = "tf-k8s"
+  key_name   = "k8s-ec2-cluster"
   public_key = tls_private_key.ec2-k8s-key.public_key_openssh
 }
 
 # Save private key file locally
 resource "local_file" "ec2-k8s-key" {
   content  = tls_private_key.ec2-k8s-key.private_key_pem
-  filename = "ec2-k8s-key.pem"
+  filename = "${local.work_path}/../inventory/k8s-ec2-cluster.pem"
+  file_permission = "0400"
 }
 
 # Define the instances
@@ -62,6 +63,7 @@ resource "aws_instance" "k8s" {
 }
 
 locals {
+  work_path = path.module
   public_ips = [for k, v in aws_instance.k8s : v.public_ip]
   ec2_master = [local.public_ips[0]]
   ec2_slaves = [for index, ip in local.public_ips : ip if index > 0]
@@ -85,7 +87,29 @@ ${join("\n", local.ec2_master)}
 [ec2_slave]
 ${join("\n", local.ec2_slaves)}
 EOF
-  filename = "cluster-inventory.yaml"
+  filename = "${local.work_path}/../inventory/cluster-inventory.yaml"
+}
+
+resource "null_resource" "ansible" {
+    provisioner "remote-exec" {
+      inline = ["echo 'Waiting for server to be initialized...'"]
+
+      connection {
+        type        = "ssh"
+        host        = local.ec2_master[0]
+        user        = "ec2-user"
+        private_key = tls_private_key.ec2-k8s-key.private_key_pem
+      }
+  }
+
+  provisioner "local-exec" {
+    working_dir = "${local.work_path}/../ansible/"
+    command = "ansible-playbook -i ../inventory/cluster-inventory.yaml setup.yml"
+  }
+  depends_on = [
+    aws_instance.k8s,
+    local_file.ansible_inventory,
+  ]
 }
 
 # # Generate inventory file for Ansible
